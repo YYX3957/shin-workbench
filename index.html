@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小新工作台">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="小新工作台">
+<meta name="description" content="蜡笔小新风格的个人工作台：日历打卡、灵感笔记、变美计划、证书规划、服装搭配、奶茶摇一摇">
+<meta name="theme-color" content="#E84C3D">
+<meta name="background-color" content="#FFF1D6">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<title>蜡笔小新工作台</title>
+<style>
+  :root{
+    --shin-yellow:#FFD938;
+    --shin-red:#E84C3D;
+    --shin-brown:#7A4A2B;
+    --shin-cream:#FFF1D6;
+    --shin-pink:#FF9EAA;
+    --shin-sky:#BFE3FF;
+    --shin-mint:#B8E6C8;
+    --shin-purple:#D9B8FF;
+    --shin-orange:#FFB385;
+    --ink:#3D2A1F;
+    --paper:#FFFCF5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Comic Sans MS','Marker Felt','STXingkai','华文行楷','楷体','SimSun',cursive,sans-serif;
+    background:var(--shin-cream);
+    color:var(--ink);
+    overflow:hidden;
+    font-size:14px;
+    background-image:
+      radial-gradient(circle at 10% 20%,rgba(255,217,56,.15) 0%,transparent 25%),
+      radial-gradient(circle at 90% 60%,rgba(232,76,61,.08) 0%,transparent 25%);
+  }
+  /* ====== 蜡笔质感通用 ====== */
+  .candy-card{
+    background:var(--paper);
+    border:3px solid var(--ink);
+    border-radius:18px 22px 16px 24px / 22px 16px 24px 18px;
+    box-shadow:4px 4px 0 var(--ink);
+    position:relative;
+  }
+  .candy-btn{
+    font-family:inherit;
+    background:var(--shin-yellow);
+    border:2.5px solid var(--ink);
+    border-radius:14px 18px 12px 16px / 16px 12px 18px 14px;
+    box-shadow:3px 3px 0 var(--ink);
+    color:var(--ink);
+    padding:8px 14px;
+    cursor:pointer;
+    font-size:14px;
+    transition:transform .08s,box-shadow .08s;
+  }
+  .candy-btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+  .candy-btn.red{background:var(--shin-red);color:#fff}
+  .candy-btn.pink{background:var(--shin-pink)}
+  .candy-btn.sky{background:var(--shin-sky)}
+  .candy-btn.mint{background:var(--shin-mint)}
+  .candy-btn.purple{background:var(--shin-purple)}
+  .candy-btn.small{padding:4px 10px;font-size:12px;box-shadow:2px 2px 0 var(--ink)}
+  .candy-btn.small:active{transform:translate(2px,2px);box-shadow:0 0}
+
+  /* ====== 蜡笔小新风 CSS 图标库 ====== */
+  .icon{width:24px;height:24px;display:inline-block;vertical-align:middle;position:relative;flex-shrink:0}
+  .icon svg{width:100%;height:100%;overflow:visible}
+  .nav-item .icon{width:26px;height:26px;margin-bottom:2px}
+
+  /* ====== 布局 ====== */
+  .app{display:flex;height:100%;width:100%}
+  .sidebar{
+    width:92px;flex-shrink:0;
+    background:var(--shin-red);
+    border-right:4px solid var(--ink);
+    display:flex;flex-direction:column;align-items:center;
+    padding:12px 0 8px;
+    gap:6px;
+    overflow-y:auto;
+    background-image:
+      repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 6px,transparent 6px 12px);
+  }
+  .sidebar::-webkit-scrollbar{display:none}
+  .nav-logo{
+    width:58px;height:58px;
+    background:var(--shin-yellow);
+    border:3px solid var(--ink);
+    border-radius:50%;
+    box-shadow:3px 3px 0 var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;
+    margin-bottom:4px;
+    position:relative;
+  }
+  .nav-logo::after{
+    content:'小新';position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);
+    font-size:10px;color:#fff;background:var(--ink);padding:1px 6px;border-radius:8px;white-space:nowrap;
+  }
+  .nav-spacer{flex:1}
+  .nav-item{
+    width:74px;
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:16px 20px 14px 18px / 18px 14px 20px 16px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:8px 2px 6px;
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    cursor:pointer;
+    transition:transform .08s,box-shadow .08s;
+    text-align:center;
+  }
+  .nav-item:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .nav-item .lbl{font-size:10px;line-height:1.1;color:var(--ink)}
+  .nav-item.active{
+    background:var(--shin-yellow);
+    transform:translate(2px,2px);
+    box-shadow:1px 1px 0 var(--ink);
+  }
+  .nav-item.active .lbl{font-weight:bold;font-size:11px}
+  .nav-pct{
+    width:74px;
+    background:var(--shin-brown);
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:6px 4px 8px;
+    color:#fff;
+    text-align:center;
+  }
+  .nav-pct .num{font-size:18px;line-height:1.1}
+  .nav-pct .txt{font-size:10px;opacity:.9;margin-top:1px}
+  .nav-pct .bar{
+    height:5px;background:#fff3;border-radius:4px;margin-top:4px;overflow:hidden;
+  }
+  .nav-pct .bar i{display:block;height:100%;background:var(--shin-yellow);border-radius:4px;transition:width .4s}
+
+  .main{flex:1;overflow-y:auto;padding:14px 16px 30px;position:relative}
+  .main::-webkit-scrollbar{width:6px}
+  .main::-webkit-scrollbar-thumb{background:var(--shin-brown);border-radius:6px}
+  .main::-webkit-scrollbar-track{background:transparent}
+
+  .page{display:none;animation:fade .25s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .page-title{
+    font-size:24px;color:var(--shin-red);
+    margin-bottom:4px;
+    text-shadow:2px 2px 0 var(--shin-yellow);
+    display:flex;align-items:center;gap:8px;
+  }
+  .page-title .icon{width:30px;height:30px}
+  .page-sub{font-size:12px;color:#9a7a5a;margin-bottom:14px;padding-left:2px}
+
+  /* ====== 日历组件 ====== */
+  .cal-wrap{margin-bottom:18px}
+  .cal-head{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--shin-yellow);
+    border:2.5px solid var(--ink);
+    border-radius:14px 18px 12px 16px / 16px 12px 18px 14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:8px 12px;
+    margin-bottom:10px;
+  }
+  .cal-head .ctitle{font-size:15px;display:flex;align-items:center;gap:6px}
+  .cal-head .ctitle .icon{width:20px;height:20px}
+  .cal-head .cmonth{font-size:13px;display:flex;gap:6px;align-items:center}
+  .cal-head .cmonth button{
+    font-family:inherit;background:var(--paper);border:2px solid var(--ink);
+    border-radius:8px;width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;
+  }
+  .cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:8px;
+  }
+  .cal-grid .dow{
+    text-align:center;font-size:11px;color:var(--shin-brown);padding:4px 0;font-weight:bold;
+  }
+  .cal-grid .day{
+    aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;
+    border-radius:8px 10px 7px 9px / 9px 7px 10px 8px;
+    cursor:pointer;
+    position:relative;
+    transition:background .1s;
+  }
+  .cal-grid .day.empty{cursor:default}
+  .cal-grid .day:hover:not(.empty){background:#fff3}
+  .cal-grid .day.today{outline:2px dashed var(--shin-red);outline-offset:-3px}
+  .cal-grid .day.done{background:var(--shin-mint);font-weight:bold}
+  .cal-grid .day.done::after{
+    content:'★';position:absolute;top:1px;right:2px;font-size:8px;color:var(--shin-red);
+  }
+  .cal-grid .day.future{opacity:.45}
+  .cal-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .cal-stat{
+    flex:1;min-width:90px;
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:10px;
+    box-shadow:2px 2px 0 var(--ink);
+    padding:6px 8px;
+    font-size:12px;
+  }
+  .cal-stat b{color:var(--shin-red);font-size:16px;display:block}
+
+  .cal-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .cal-tab{
+    font-family:inherit;font-size:12px;
+    background:var(--paper);border:2px solid var(--ink);
+    border-radius:10px;box-shadow:2px 2px 0 var(--ink);
+    padding:4px 8px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .cal-tab.active{background:var(--shin-pink);font-weight:bold}
+  .cal-tab .icon{width:14px;height:14px}
+  .cal-tab .dot{display:inline-block;width:8px;height:8px;border-radius:50%}
+
+  /* ====== 灵感笔记 ====== */
+  .note-input{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .note-input input[type=text]{
+    flex:1;min-width:160px;
+    font-family:inherit;font-size:14px;
+    padding:8px 10px;
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:12px;
+    box-shadow:3px 3px 0 var(--ink);
+    color:var(--ink);
+  }
+  .note-input select{
+    font-family:inherit;font-size:13px;
+    padding:8px 10px;
+    background:var(--shin-sky);
+    border:2.5px solid var(--ink);
+    border-radius:12px;
+    box-shadow:3px 3px 0 var(--ink);
+    color:var(--ink);
+  }
+  .note-list{display:flex;flex-direction:column;gap:8px}
+  .note-item{
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:14px 16px 12px 18px / 16px 12px 18px 14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:10px 12px;
+    position:relative;
+  }
+  .note-item .cat{
+    display:inline-block;font-size:10px;
+    padding:2px 8px;border-radius:8px;margin-right:6px;
+    border:1.5px solid var(--ink);
+    color:var(--ink);
+  }
+  .note-item .time{font-size:10px;color:#9a7a5a;display:block;margin-top:4px}
+  .note-item .text{font-size:14px;word-break:break-all;margin-top:4px;line-height:1.5}
+  .note-item .ops{position:absolute;top:6px;right:8px;display:flex;gap:4px}
+  .note-item .ops button{
+    font-family:inherit;font-size:11px;background:var(--shin-yellow);
+    border:1.5px solid var(--ink);border-radius:6px;padding:2px 6px;cursor:pointer;
+    box-shadow:1px 1px 0 var(--ink);
+  }
+  .note-empty{text-align:center;color:#bba;padding:30px;font-size:14px}
+
+  /* ====== 穿搭 ====== */
+  .outfit-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .outfit-tab{
+    font-family:inherit;font-size:12px;
+    background:var(--paper);border:2.5px solid var(--ink);
+    border-radius:10px;box-shadow:2px 2px 0 var(--ink);
+    padding:5px 9px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .outfit-tab.active{background:var(--shin-purple);font-weight:bold}
+  .outfit-tab .icon{width:14px;height:14px}
+  .outfit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .outfit-card{
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:14px;
+    box-shadow:3px 3px 0 var(--ink);
+    overflow:hidden;
+  }
+  .outfit-card .img{
+    width:100%;aspect-ratio:3/4;background:#f0e8d8;display:block;object-fit:cover;
+    border-bottom:2px solid var(--ink);
+  }
+  .outfit-card .img.placeholder{display:flex;align-items:center;justify-content:center;background:var(--shin-cream)}
+  .outfit-card .img.placeholder .icon{width:42px;height:42px;opacity:.4}
+  .outfit-card .body{padding:8px}
+  .outfit-card .note{font-size:12px;word-break:break-all;line-height:1.4;min-height:16px}
+  .outfit-card .date{font-size:10px;color:#9a7a5a;margin-top:4px}
+  .outfit-card .del{
+    font-family:inherit;font-size:11px;background:var(--shin-red);color:#fff;
+    border:1.5px solid var(--ink);border-radius:6px;padding:2px 8px;cursor:pointer;
+    margin-top:6px;
+  }
+  .outfit-add{margin-top:10px}
+
+  /* ====== 证书 ====== */
+  .cert-countdown{
+    color:#fff;
+    border:2.5px solid var(--ink);border-radius:14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:8px 12px;margin-bottom:10px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .cert-countdown .big{font-size:24px;background:var(--shin-yellow);color:var(--ink);
+    padding:2px 10px;border-radius:10px;border:2px solid var(--ink);}
+  .cert-card{
+    background:var(--paper);
+    border:2.5px solid var(--ink);
+    border-radius:14px 16px 12px 18px / 16px 12px 18px 14px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:10px 12px;margin-bottom:12px;
+  }
+  .cert-card .h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .cert-card .name{font-size:14px;color:var(--shin-red);font-weight:bold}
+  .cert-card .tag{font-size:10px;padding:2px 8px;border-radius:8px;border:1.5px solid var(--ink);background:var(--shin-yellow)}
+  .cert-card .tag.opt{background:var(--shin-sky)}
+  .cert-card .dd{font-size:12px;color:#9a7a5a;margin:4px 0}
+  .cert-card .dd b{color:var(--shin-red);font-size:16px}
+
+  .cet-banner{
+    background:linear-gradient(135deg,var(--shin-sky),var(--shin-purple));
+    border:2.5px solid var(--ink);border-radius:16px;
+    box-shadow:3px 3px 0 var(--ink);
+    padding:10px 14px;margin-bottom:14px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .cet-banner .lbl{font-size:14px}
+  .cet-banner .days{font-size:26px;color:var(--shin-red);text-shadow:1px 1px 0 #fff;font-weight:bold}
+
+  /* ====== 奶茶 ====== */
+  .tea-result{
+    font-size:14px;text-align:center;padding:16px;
+    background:#FFF6E0;border:2px dashed var(--ink);border-radius:12px;margin-bottom:10px;
+  }
+  .tea-result .big{font-size:22px;color:var(--shin-red);font-weight:bold;margin:6px 0;display:block}
+  .tea-result .small{font-size:11px;color:#9a7a5a;margin-top:4px}
+
+  /* ====== 弹窗 ====== */
+  .modal-mask{
+    position:fixed;inset:0;background:rgba(60,42,31,.5);
+    display:none;align-items:center;justify-content:center;z-index:50;
+    padding:16px;
+  }
+  .modal-mask.show{display:flex}
+  .modal-box{
+    background:var(--paper);
+    border:3px solid var(--ink);
+    border-radius:18px;
+    box-shadow:5px 5px 0 var(--ink);
+    padding:16px;
+    max-width:380px;width:100%;
+    max-height:80vh;overflow-y:auto;
+  }
+  .modal-box h3{color:var(--shin-red);margin-bottom:10px}
+  .modal-box textarea{
+    width:100%;min-height:80px;font-family:inherit;font-size:14px;
+    padding:8px;background:#fff;border:2px solid var(--ink);border-radius:10px;
+    box-shadow:2px 2px 0 var(--ink);resize:vertical;color:var(--ink);
+  }
+  .modal-box .row{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--shin-brown);color:#fff;
+    padding:8px 16px;border-radius:12px;
+    border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);
+    font-size:13px;z-index:100;
+    opacity:0;transition:opacity .3s,bottom .3s;
+    pointer-events:none;
+  }
+  .toast.show{opacity:1;bottom:30px}
+
+  /* file input 用 inline style 隐藏，确保 label 触发可用 */
+
+  .cat-study{background:var(--shin-sky)}
+  .cat-life{background:var(--shin-mint)}
+  .cat-outfit{background:var(--shin-purple)}
+  .cat-exam{background:var(--shin-yellow)}
+  .cat-other{background:var(--shin-pink)}
+
+  @media (max-width:380px){
+    .sidebar{width:84px}
+    .nav-item{width:70px}
+    .main{padding:10px 10px 30px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 左侧导航 -->
+  <nav class="sidebar">
+    <div class="nav-logo">
+      <svg viewBox="0 0 50 50" style="width:46px;height:46px">
+        <!-- 脸 -->
+        <circle cx="25" cy="25" r="20" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="2"/>
+        <!-- 头发 -->
+        <path d="M7 20 Q15 5 25 8 Q35 5 43 20 Q43 12 38 8 Q30 3 25 5 Q20 3 12 8 Q7 12 7 20Z" fill="#7A4A2B"/>
+        <!-- 眉毛 -->
+        <rect x="13" y="18" width="9" height="3" rx="1.5" fill="#3D2A1F" transform="rotate(-8 13 18)"/>
+        <rect x="28" y="18" width="9" height="3" rx="1.5" fill="#3D2A1F" transform="rotate(8 28 18)"/>
+        <!-- 眼睛 -->
+        <ellipse cx="16" cy="24" rx="1.6" ry="2.2" fill="#3D2A1F"/>
+        <ellipse cx="34" cy="24" rx="1.6" ry="2.2" fill="#3D2A1F"/>
+        <!-- 脸蛋 -->
+        <ellipse cx="11" cy="30" rx="3.5" height="2.5" fill="#FF9EAA"/>
+        <ellipse cx="39" cy="30" rx="3.5" height="2.5" fill="#FF9EAA"/>
+        <!-- 嘴巴 -->
+        <path d="M19 33 Q25 39 31 33 Q28 36 25 36 Q22 36 19 33Z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="nav-item active" data-page="spark">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C8 2 6 5 7 9C7 10 7 11 6 12C5 13 5 15 6 16L8 16C8 19 9 21 12 22C15 21 16 19 16 16L18 16C19 15 19 13 18 12C17 11 17 10 17 9C18 5 16 2 12 2Z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/>
+          <rect x="11" y="14" width="2" height="6" rx="1" fill="#3D2A1F"/>
+          <path d="M5 5L7 7M19 5L17 7M5 13L3 11M19 13L21 11" stroke="#FFD938" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="lbl">灵光一闪</span>
+    </div>
+    <div class="nav-item" data-page="sport">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="5" r="3" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/>
+          <path d="M9 8 L8 14 L7 18 L9 18 L10 14 L11 18 L9 22" stroke="#E84C3D" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M15 8 L16 14 L17 18 L15 18 L14 14 L13 18 L15 22" stroke="#E84C3D" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M14 9 L20 12 L18 14 M10 9 L4 12 L6 14" stroke="#FFD9A8" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="lbl">运动打卡</span>
+    </div>
+    <div class="nav-item" data-page="english">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 3h10a4 4 0 0 1 4 4v14H8a4 4 0 0 1-4-4V3z" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/>
+          <path d="M14 3v14a4 4 0 0 0 4 4" fill="#FFFCF5" stroke="#3D2A1F" stroke-width="1.5"/>
+          <path d="M7 7h6M7 11h6" stroke="#3D2A1F" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="lbl">英语提升</span>
+    </div>
+    <div class="nav-item" data-page="cert">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="9" r="5" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/>
+          <path d="M12 9 L13.5 11 L16 11.5 L14 13 L14.5 16 L12 14.5 L9.5 16 L10 13 L8 11.5 L10.5 11Z" fill="#E84C3D"/>
+          <path d="M9 12 L7 21 L10 19 L12 21 L14 19 L17 21 L15 12" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/>
+        </svg>
+      </span>
+      <span class="lbl">证书规划</span>
+    </div>
+    <div class="nav-item" data-page="beauty">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 4 Q9 7 9 11 Q9 15 12 20 Q15 15 15 11 Q15 7 12 4Z" fill="#FF9EAA" stroke="#3D2A1F" stroke-width="1.5"/>
+          <circle cx="9" cy="11" r="1.5" fill="#FFF"/>
+          <path d="M6 5L4 6 M18 5L20 6 M5 8L3 9 M19 8L21 9" stroke="#FFD938" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="lbl">变美计划</span>
+    </div>
+    <div class="nav-item" data-page="collect">
+      <span class="icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M5 8h14l-1 12H6L5 8z" fill="#D9B8FF" stroke="#3D2A1F" stroke-width="1.5"/>
+          <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#3D2A1F" stroke-width="1.5"/>
+          <circle cx="12" cy="14" r="1.5" fill="#E84C3D"/>
+        </svg>
+      </span>
+      <span class="lbl">美物收藏柜</span>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-pct">
+      <div class="num" id="globalPct">0%</div>
+      <div class="txt">今日完成</div>
+      <div class="bar"><i id="globalBar" style="width:0%"></i></div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="main" id="main">
+    <!-- 模块1：灵光一闪 -->
+    <section class="page active" id="page-spark">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C8 2 6 5 7 9C7 10 7 11 6 12C5 13 5 15 6 16L8 16C8 19 9 21 12 22C15 21 16 19 16 16L18 16C19 15 19 13 18 12C17 11 17 10 17 9C18 5 16 2 12 2Z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/>
+            <rect x="11" y="14" width="2" height="6" rx="1" fill="#3D2A1F"/>
+          </svg>
+        </span>
+        灵光一闪
+      </div>
+      <div class="page-sub">随手记录每一个灵感、碎碎念和突发奇想～</div>
+      <div class="note-input">
+        <input type="text" id="sparkText" placeholder="这一刻想到了什么？" maxlength="200">
+        <select id="sparkCat">
+          <option value="学习思路">学习思路</option>
+          <option value="碎碎念">碎碎念</option>
+          <option value="穿搭灵感">穿搭灵感</option>
+          <option value="备考技巧">备考技巧</option>
+          <option value="突发想法">突发想法</option>
+        </select>
+        <button class="candy-btn red" onclick="addSpark()">记下来</button>
+      </div>
+      <div class="note-list" id="sparkList"></div>
+    </section>
+
+    <!-- 模块2：运动打卡 -->
+    <section class="page" id="page-sport">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="5" r="3" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/>
+            <path d="M9 8 L8 14 L7 22 L10 22 L11 14 L13 14 L14 22 L17 22 L16 14 L15 8 Z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/>
+            <path d="M14 9 L20 12 L19 14 M10 9 L4 12 L5 14" stroke="#FFD9A8" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </span>
+        运动打卡
+      </div>
+      <div class="page-sub">坚持每天动一动，蜡笔小新也会为你加油！</div>
+      <div id="sportWrap"></div>
+    </section>
+
+    <!-- 模块3：英语提升 -->
+    <section class="page" id="page-english">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 3h10a4 4 0 0 1 4 4v14H8a4 4 0 0 1-4-4V3z" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/>
+            <path d="M14 3v14a4 4 0 0 0 4 4" fill="#FFFCF5" stroke="#3D2A1F" stroke-width="1.5"/>
+            <text x="10" y="14" font-size="9" font-weight="bold" fill="#3D2A1F" text-anchor="middle">ABC</text>
+          </svg>
+        </span>
+        英语提升
+      </div>
+      <div class="page-sub">听说读写全都要，四级冲刺不放松～</div>
+      <div class="cet-banner">
+        <div class="lbl">距离四级考试还有</div>
+        <div class="days" id="cetDays">--</div>
+      </div>
+      <div id="englishWrap"></div>
+    </section>
+
+    <!-- 模块4：变美计划 -->
+    <section class="page" id="page-beauty">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 4 Q9 7 9 11 Q9 15 12 20 Q15 15 15 11 Q15 7 12 4Z" fill="#FF9EAA" stroke="#3D2A1F" stroke-width="1.5"/>
+            <circle cx="9" cy="11" r="1.2" fill="#FFF"/>
+          </svg>
+        </span>
+        变美计划
+      </div>
+      <div class="page-sub">每天一点点，变美看得见～</div>
+      <div id="beautyWrap"></div>
+    </section>
+
+    <!-- 模块5：证书规划 -->
+    <section class="page" id="page-cert">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="9" r="5" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/>
+            <path d="M12 9 L13.5 11 L16 11.5 L14 13 L14.5 16 L12 14.5 L9.5 16 L10 13 L8 11.5 L10.5 11Z" fill="#E84C3D"/>
+            <path d="M9 12 L7 21 L10 19 L12 21 L14 19 L17 21 L15 12" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/>
+          </svg>
+        </span>
+        证书规划
+      </div>
+      <div class="page-sub">跨境电商专业专属证书路线图</div>
+      <div id="certWrap"></div>
+    </section>
+
+    <!-- 模块6：美物收藏柜 -->
+    <section class="page" id="page-collect">
+      <div class="page-title">
+        <span class="icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 8h14l-1 12H6L5 8z" fill="#D9B8FF" stroke="#3D2A1F" stroke-width="1.5"/>
+            <path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#3D2A1F" stroke-width="1.5"/>
+          </svg>
+        </span>
+        美物收藏柜
+      </div>
+      <div class="page-sub">服装搭配管理 + 奶茶选择站</div>
+
+      <div class="candy-card" style="padding:12px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="icon" style="width:22px;height:22px">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 4 L4 12 L8 11 L8 20 L12 14 L16 20 L16 11 L20 12Z" fill="#FF9EAA" stroke="#3D2A1F" stroke-width="1.5"/>
+            </svg>
+          </span>
+          <span style="font-size:16px;color:var(--shin-red);font-weight:bold">服装搭配管理</span>
+        </div>
+        <div class="outfit-tabs" id="outfitTabs"></div>
+        <div class="outfit-grid" id="outfitGrid"></div>
+        <div class="outfit-add" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <label class="candy-btn purple small" for="outfitFile" style="cursor:pointer;display:inline-block">+ 从相册添加</label>
+          <label class="candy-btn sky small" for="outfitCam" style="cursor:pointer;display:inline-block">📷 拍照添加</label>
+          <button class="candy-btn pink small" onclick="addOutfitByUrl()">🔗 粘贴图片链接</button>
+          <input type="file" id="outfitFile" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none">
+          <input type="file" id="outfitCam" accept="image/*" capture="environment" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none">
+        </div>
+
+        <!-- 小人物穿搭预览 -->
+        <div style="margin-top:14px;border-top:2px dashed var(--ink);padding-top:12px">
+          <div style="font-size:14px;color:var(--shin-red);margin-bottom:8px;font-weight:bold;display:flex;align-items:center;gap:6px">
+            <span class="icon" style="width:18px;height:18px">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/><path d="M9 9 L7 16 L9 22 L15 22 L17 16 L15 9Z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/></svg>
+            </span>
+            <span>试衣间</span>
+            <span style="font-size:11px;color:#9a7a5a;font-weight:normal">点身体部位换颜色，方便搭衣服～</span>
+          </div>
+          <div id="dollWrap" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;justify-content:center;background:#FFF6E0;border:2px dashed var(--ink);border-radius:14px;padding:12px"></div>
+        </div>
+
+        <div style="margin-top:14px;border-top:2px dashed var(--ink);padding-top:12px">
+          <div style="font-size:14px;color:var(--shin-red);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+            <span class="icon" style="width:18px;height:18px">
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="#FFFCF5" stroke="#3D2A1F" stroke-width="1.5"/><path d="M3 9h18" stroke="#3D2A1F" stroke-width="1.5"/><rect x="6" y="12" width="3" height="3" fill="#E84C3D"/><rect x="11" y="12" width="3" height="3" fill="#FFD938"/></svg>
+            </span>
+            <span style="font-weight:bold">穿搭日历打卡（记录穿搭使用日期）</span>
+          </div>
+          <div id="outfitCalWrap"></div>
+        </div>
+      </div>
+
+      <div class="candy-card" style="padding:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="icon" style="width:22px;height:22px">
+            <svg viewBox="0 0 24 24">
+              <path d="M7 5h10l-1 13H8L7 5z" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/>
+              <path d="M5 5h14l-1 13H6L5 5z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/>
+              <path d="M9 8h6v10H9z" fill="#3D2A1F" opacity=".3"/>
+              <path d="M11 4 Q13 1 12 4" stroke="#3D2A1F" stroke-width="1.5" fill="none"/>
+            </svg>
+          </span>
+          <span style="font-size:16px;color:var(--shin-red);font-weight:bold">奶茶选择站</span>
+        </div>
+        <div style="font-size:12px;color:#9a7a5a;margin-bottom:8px">今天喝什么奶茶？帮你摇一摇～</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="candy-btn pink small" onclick="rollTea()">摇一杯</button>
+          <button class="candy-btn sky small" onclick="addTeaLike()">记一杯喜欢的</button>
+        </div>
+        <div class="tea-result" id="teaResult">点上面"摇一杯"，看看今天喝什么～</div>
+        <div style="font-size:13px;color:var(--shin-red);margin-bottom:6px;font-weight:bold">我的奶茶收藏</div>
+        <div id="teaList" style="display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal-box">
+    <h3 id="modalTitle">编辑</h3>
+    <div id="modalBody"></div>
+    <div class="row">
+      <button class="candy-btn small" onclick="closeModal()">取消</button>
+      <button class="candy-btn red small" id="modalOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'shin_workbench_v2';
+
+// === 配置 ===
+const SPORT_TASKS = [
+  {id:'sport_stretch_m', name:'晨间拉伸', ico:'sun'},
+  {id:'sport_jump',     name:'跳绳/深蹲跳', ico:'jump'},
+  {id:'sport_swim',     name:'游泳专项', ico:'swim'},
+  {id:'sport_stretch_n',name:'睡前拉伸体态矫正', ico:'moon'},
+];
+const ENGLISH_TASKS = [
+  {id:'en_listen', name:'听力每日打卡', ico:'ear'},
+  {id:'en_speak',  name:'口语每日打卡', ico:'mouth'},
+  {id:'en_word',   name:'四级单词背诵', ico:'book'},
+  {id:'en_wrong',  name:'四级错题集复习', ico:'cross'},
+  {id:'en_paper',  name:'四级真题试卷', ico:'paper'},
+  {id:'en_essay',  name:'四级作文模板背诵', ico:'pen'},
+];
+const BEAUTY_TASKS = [
+  {id:'bt_hair',  name:'头发养护变长', ico:'hair'},
+  {id:'bt_face',  name:'脸部护肤', ico:'face'},
+  {id:'bt_body',  name:'身体护肤', ico:'body'},
+];
+const CERTS = [
+  {id:'c1_1x',  name:'1+X跨境电子商务多平台运营职业技能等级证书', tag:'核心必考', opt:false, dd:'2026-06-20', color:'var(--shin-red)'},
+  {id:'c2_cet4', name:'全国大学英语四级证书', tag:'核心必考', opt:false, dd:'2026-12-14', color:'var(--shin-sky)'},
+  {id:'c3_com',  name:'全国计算机一级/二级证书', tag:'专升本刚需', opt:false, dd:'2026-09-26', color:'var(--shin-mint)'},
+  {id:'c4_doc',  name:'国际贸易单证员证书', tag:'进阶增值', opt:true, dd:'2026-11-15', color:'var(--shin-purple)'},
+  {id:'c5_ops',  name:'跨境电商运营师专项证书', tag:'进阶增值', opt:true, dd:'2026-10-18', color:'var(--shin-yellow)'},
+  {id:'c6_pth',  name:'普通话等级证书', tag:'进阶增值', opt:true, dd:'2026-05-24', color:'var(--shin-pink)'},
+];
+const OUTFIT_CATS = [
+  {id:'commute', name:'日常通勤', ico:'work'},
+  {id:'class',   name:'上课简约', ico:'book'},
+  {id:'travel',  name:'出游穿搭', ico:'sun'},
+  {id:'interview',name:'正式面试', ico:'suit'},
+];
+const TEA_POOL = ['珍珠奶茶','芋泥波波','烤奶','杨枝甘露','茉莉奶绿','布丁奶茶','红豆奶茶','芒果椰椰','生椰拿铁','葡萄柚柚','蜂蜜柚子茶','芝士草莓','可可奶茶','抹茶拿铁','三兄弟奶茶','仙草奶茶','燕麦奶茶','桂花酒酿','豆乳奶茶','椰云拿铁'];
+
+// === 内嵌小图标SVG ===
+const ICONS = {
+  sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="#E84C3D" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  jump:'<svg viewBox="0 0 24 24"><circle cx="12" cy="6" r="3" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/><path d="M9 9 L7 14 L6 20 L8 20 L9 16 L11 16 L11 20 L13 20 L13 16 L15 16 L16 20 L18 20 L17 14 L15 9 Z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/><path d="M4 6 Q6 4 8 6 M16 6 Q18 4 20 6" stroke="#3D2A1F" stroke-width="1.5" fill="none"/></svg>',
+  swim:'<svg viewBox="0 0 24 24"><path d="M2 14 Q6 10 10 14 Q14 18 18 14 Q22 10 24 14" stroke="#3D2A1F" stroke-width="1.5" fill="none"/><path d="M2 18 Q6 14 10 18 Q14 22 18 18 Q22 14 24 18" stroke="#BFE3FF" stroke-width="1.5" fill="none"/><circle cx="17" cy="8" r="3" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/></svg>',
+  moon:'<svg viewBox="0 0 24 24"><path d="M19 13 Q19 7 14 7 Q19 5 19 13 Q19 19 14 19 Q13 15 17 14 Q19 11 16 13Z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/><path d="M12 15 L12 19 M10 17 L14 17" stroke="#3D2A1F" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  ear:'<svg viewBox="0 0 24 24"><path d="M9 4 Q15 4 17 10 Q18 14 16 17 Q14 20 12 19 Q10 18 11 16 Q12 14 11 12 Q9 10 7 11 Q5 9 7 7 Q9 5 9 4Z" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/><path d="M4 9 Q3 12 5 14" stroke="#3D2A1F" stroke-width="1.5" fill="none"/></svg>',
+  mouth:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#FF9EAA" stroke="#3D2A1F" stroke-width="1.5"/><path d="M7 12 Q12 18 17 12 Q12 16 7 12Z" fill="#3D2A1F"/><circle cx="7" cy="9" r="1" fill="#FFF"/><circle cx="17" cy="9" r="1" fill="#FFF"/></svg>',
+  book:'<svg viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/><path d="M13 7a3 3 0 0 1 3-3h4v13a3 3 0 0 1-3 3h-4V7z" fill="#E84C3D" stroke="#3D2A1F" stroke-width="1.5"/><path d="M7 9h3M7 13h3" stroke="#3D2A1F" stroke-width="1.5"/></svg>',
+  cross:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#FF9EAA" stroke="#3D2A1F" stroke-width="1.5"/><path d="M8 8 L16 16 M16 8 L8 16" stroke="#FFF" stroke-width="2.5" stroke-linecap="round"/></svg>',
+  paper:'<svg viewBox="0 0 24 24"><path d="M5 3h11l4 4v14H5V3z" fill="#FFFCF5" stroke="#3D2A1F" stroke-width="1.5"/><path d="M16 3v4h4" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/><path d="M8 11h8M8 15h8M8 19h5" stroke="#3D2A1F" stroke-width="1.5"/></svg>',
+  pen:'<svg viewBox="0 0 24 24"><path d="M3 17 L14 6 L18 10 L7 21 L3 21 Z" fill="#FFB385" stroke="#3D2A1F" stroke-width="1.5"/><path d="M14 6 L18 2 L22 6 L18 10 Z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/><path d="M3 21 L7 17" stroke="#3D2A1F" stroke-width="1.5"/></svg>',
+  hair:'<svg viewBox="0 0 24 24"><path d="M7 4 Q12 2 17 4 Q19 8 18 14 Q17 20 12 22 Q7 20 6 14 Q5 8 7 4Z" fill="#3D2A1F"/><path d="M9 5 Q12 7 15 5" stroke="#FFD938" stroke-width="1.5" fill="none"/><circle cx="12" cy="15" r="2" fill="#FF9EAA"/></svg>',
+  face:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#FFD9A8" stroke="#3D2A1F" stroke-width="1.5"/><circle cx="9" cy="11" r="1" fill="#3D2A1F"/><circle cx="15" cy="11" r="1" fill="#3D2A1F"/><circle cx="8" cy="14" r="1.2" fill="#FF9EAA"/><circle cx="16" cy="14" r="1.2" fill="#FF9EAA"/><path d="M9 16 Q12 18 15 16" stroke="#3D2A1F" stroke-width="1.5" fill="none"/></svg>',
+  body:'<svg viewBox="0 0 24 24"><path d="M7 3v18a3 3 0 0 1-3 3h16a3 3 0 0 1-3-3V3" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/><path d="M5 8h16v3H5z" fill="#FFD938" stroke="#3D2A1F" stroke-width="1.5"/><circle cx="12" cy="17" r="1.5" fill="#FF9EAA"/></svg>',
+  work:'<svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8z" fill="#BFE3FF" stroke="#3D2A1F" stroke-width="1.5"/><path d="M9 8V6a3 3 0 0 1 6 0v2" fill="none" stroke="#3D2A1F" stroke-width="1.5"/><path d="M12 11v5" stroke="#E84C3D" stroke-width="2"/></svg>',
+  suit:'<svg viewBox="0 0 24 24"><path d="M7 4h10v18H7z" fill="#3D2A1F"/><path d="M7 4 L4 8 L4 18 L7 18Z M17 4 L20 8 L20 18 L17 18Z" fill="#7A4A2B" stroke="#3D2A1F" stroke-width="1"/><path d="M11 7 L12 9 L13 7 L13 20 L11 20Z" fill="#FFF"/></svg>',
+};
+
+// === 数据 ===
+let DB = load();
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return {
+    checks:{}, sparks:[], outfits:{commute:[],class:[],travel:[],interview:[]},
+    outfitChecks:{}, teas:[], calMonths:{}, doll:null
+  };
+}
+function save(){ localStorage.setItem(STORE_KEY, JSON.stringify(DB)); }
+function ensureKey(taskId){ if(!DB.checks[taskId]) DB.checks[taskId] = {}; }
+
+function fmtDate(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`;}
+function todayStr(){return fmtDate(new Date());}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(window.__toastT);
+  window.__toastT=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function daysBetween(dd){
+  const target=new Date(dd+'T00:00:00');
+  const now=new Date();now.setHours(0,0,0,0);
+  return Math.ceil((target-now)/86400000);
+}
+
+document.querySelectorAll('.nav-item').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('page-'+el.dataset.page).classList.add('active');
+    document.getElementById('main').scrollTop=0;
+  });
+});
+
+function getCalMonth(key){
+  const now=new Date();
+  const def=`${now.getFullYear()}-${now.getMonth()}`;
+  if(!DB.calMonths[key]) DB.calMonths[key]=def;
+  return DB.calMonths[key].split('-').map(Number);
+}
+function setCalMonth(key,y,m){
+  DB.calMonths[key]=`${y}-${m}`;
+  renderAll();
+}
+function toggleCheck(taskId,date){
+  ensureKey(taskId);
+  if(DB.checks[taskId][date]) delete DB.checks[taskId][date];
+  else DB.checks[taskId][date]=true;
+  save(); renderAll();
+}
+function isChecked(taskId,date){ return DB.checks[taskId] && DB.checks[taskId][date]; }
+function weekRate(taskId){
+  const now=new Date();
+  const day=now.getDay()||7;
+  const monday=new Date(now); monday.setDate(now.getDate()-day+1); monday.setHours(0,0,0,0);
+  let cnt=0;
+  for(let i=0;i<7;i++){
+    const d=new Date(monday); d.setDate(monday.getDate()+i);
+    if(d>now) break;
+    if(isChecked(taskId,fmtDate(d))) cnt++;
+  }
+  const passed=Math.min(day,7);
+  return passed?Math.round(cnt/passed*100):0;
+}
+function monthRate(taskId){
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth();
+  const daysPassed=now.getDate();
+  let cnt=0;
+  for(let d=1;d<=daysPassed;d++) if(isChecked(taskId,fmtDate(new Date(y,m,d)))) cnt++;
+  return {done:cnt,passed:daysPassed,rate:Math.round(cnt/daysPassed*100)};
+}
+function todayTotalRate(){
+  const all=[
+    ...SPORT_TASKS,...ENGLISH_TASKS,...BEAUTY_TASKS,
+    ...CERTS.map(c=>({id:c.id})),
+    {id:'outfit_daily'}
+  ];
+  let done=0;
+  all.forEach(t=>{ if(isChecked(t.id,todayStr())) done++; });
+  return Math.round(done/all.length*100);
+}
+
+function ico(t){
+  return `<span class="icon" style="width:14px;height:14px">${ICONS[t]||ICONS.book}</span>`;
+}
+function icoLg(t){
+  return `<span class="icon" style="width:22px;height:22px">${ICONS[t]||ICONS.book}</span>`;
+}
+
+function renderCal(key,taskId,opts={}){
+  const [y,m]=getCalMonth(key);
+  const first=new Date(y,m,1);
+  const startDow=first.getDay()||7;
+  const daysInMonth=new Date(y,m+1,0).getDate();
+  const today=todayStr();
+  const now=new Date();
+  let html=`<div class="cal-head">
+    <div class="ctitle">${opts.title||''}</div>
+    <div class="cmonth">
+      <button onclick="setCalMonth('${key}',${m===0?y-1:y},${m===0?11:m-1})">‹</button>
+      <span>${y}年${m+1}月</span>
+      <button onclick="setCalMonth('${key}',${m===11?y+1:y},${m===11?0:m+1})">›</button>
+    </div>
+  </div>`;
+  html+=`<div class="cal-grid">`;
+  ['一','二','三','四','五','六','日'].forEach(d=>html+=`<div class="dow">${d}</div>`);
+  for(let i=1;i<startDow;i++) html+=`<div class="day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=fmtDate(new Date(y,m,d));
+    const done=isChecked(taskId,dateStr);
+    const isToday=dateStr===today;
+    const future=new Date(y,m,d)>now && !isToday;
+    html+=`<div class="day ${done?'done':''} ${isToday?'today':''} ${future?'future':''}" onclick="${future?'':`toggleCheck('${taskId}','${dateStr}')`}">${d}</div>`;
+  }
+  html+=`</div>`;
+  const wr=weekRate(taskId);
+  const mr=monthRate(taskId);
+  html+=`<div class="cal-stats">
+    <div class="cal-stat">本周完成率<br><b>${wr}%</b></div>
+    <div class="cal-stat">本月进度<br><b>${mr.done}/${mr.passed}天</b></div>
+    <div class="cal-stat">月完成率<br><b>${mr.rate}%</b></div>
+  </div>`;
+  return html;
+}
+
+function renderMultiCal(containerId, tasks, keyPrefix){
+  const wrap=document.getElementById(containerId);
+  if(!wrap.dataset.active) wrap.dataset.active=tasks[0].id;
+  const active=wrap.dataset.active;
+  const task=tasks.find(t=>t.id===active);
+  let tabs=`<div class="cal-tabs">`;
+  tasks.forEach(t=>{
+    tabs+=`<div class="cal-tab ${t.id===active?'active':''}" onclick="document.getElementById('${containerId}').dataset.active='${t.id}';renderAll()">
+      ${ico(t.ico)} ${t.name}
+    </div>`;
+  });
+  tabs+=`</div>`;
+  wrap.innerHTML=tabs+renderCal(keyPrefix+'_'+active, active, {title:`${icoLg(task.ico)} ${task.name}`});
+}
+
+// === 模块渲染 ===
+function renderAll(){
+  renderMultiCal('sportWrap', SPORT_TASKS, 'sport');
+  renderMultiCal('englishWrap', ENGLISH_TASKS, 'en');
+  renderMultiCal('beautyWrap', BEAUTY_TASKS, 'bt');
+  renderCerts();
+  renderSparks();
+  renderOutfits();
+  renderOutfitCal();
+  renderDoll();
+  renderTeas();
+  const pct=todayTotalRate();
+  document.getElementById('globalPct').textContent=pct+'%';
+  document.getElementById('globalBar').style.width=pct+'%';
+  const d=daysBetween('2026-12-14');
+  document.getElementById('cetDays').textContent=Math.max(0,d)+' 天';
+}
+
+// === 证书 ===
+function renderCerts(){
+  const wrap=document.getElementById('certWrap');
+  let html=`<div style="font-size:15px;color:var(--shin-red);margin:6px 0 10px;font-weight:bold;display:flex;align-items:center;gap:6px">${icoLg('book')} 在校必考证书</div>`;
+  CERTS.filter(c=>!c.opt).forEach(c=>html+=renderCertCard(c));
+  html+=`<div style="font-size:15px;color:var(--shin-red);margin:16px 0 10px;font-weight:bold;display:flex;align-items:center;gap:6px">${icoLg('cross')} 进阶增值证书</div>`;
+  CERTS.filter(c=>c.opt).forEach(c=>html+=renderCertCard(c));
+  wrap.innerHTML=html;
+}
+function renderCertCard(c){
+  const left=daysBetween(c.dd);
+  const expired = left<0;
+  const leftTxt = expired ? '<b style="color:#9a7a5a">已考过·待补考</b>' : `剩 <b>${left}</b> 天`;
+  const dd=new Date(c.dd);
+  const cdText = expired ? '下次考试待定' : '备考倒计时';
+  const cdNum = expired ? '待定' : left;
+  return `<div class="cert-card" ${expired?'style="opacity:.85"':''}>
+    <div class="h">
+      <span class="name">${c.name}</span>
+      <span class="tag ${c.opt?'opt':''}">${c.tag}</span>
+    </div>
+    <div class="dd">考试日期：${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')} ｜ ${leftTxt}</div>
+    <div class="cert-countdown" style="background:${expired?'#9a7a5a':c.color}">
+      <span style="font-size:13px;flex:1">${cdText}</span>
+      <span class="big">${cdNum}</span>
+      <span style="font-size:12px">${expired?'':'天'}</span>
+    </div>
+    ${renderCal('cert_'+c.id, c.id, {title:`${icoLg('paper')} 每日学习打卡`})}
+  </div>`;
+}
+
+// === 灵感 ===
+function addSpark(){
+  const txt=document.getElementById('sparkText').value.trim();
+  const cat=document.getElementById('sparkCat').value;
+  if(!txt){toast('写点什么再记嘛～');return;}
+  DB.sparks.unshift({id:Date.now(),text:txt,cat,time:new Date().toISOString()});
+  save(); document.getElementById('sparkText').value='';
+  renderSparks(); toast('记下啦 ✏️');
+}
+function delSpark(id){ DB.sparks=DB.sparks.filter(s=>s.id!==id); save();renderSparks(); }
+function editSpark(id){
+  const s=DB.sparks.find(x=>x.id===id); if(!s)return;
+  openModal('编辑灵感', `
+    <textarea id="editSparkText">${s.text.replace(/</g,'&lt;')}</textarea>
+    <div style="margin-top:8px">
+      <label style="font-size:13px">分类：</label>
+      <select id="editSparkCat" style="font-family:inherit;padding:4px 8px;border:2px solid var(--ink);border-radius:8px">
+        ${['学习思路','碎碎念','穿搭灵感','备考技巧','突发想法'].map(c=>`<option ${c===s.cat?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+  `,()=>{
+    const t=document.getElementById('editSparkText').value.trim();
+    if(!t){toast('内容不能空哦');return false;}
+    s.text=t; s.cat=document.getElementById('editSparkCat').value;
+    save();renderSparks();toast('改好啦 ✏️'); return true;
+  });
+}
+function renderSparks(){
+  const list=document.getElementById('sparkList');
+  if(!DB.sparks.length){
+    list.innerHTML=`<div class="note-empty">还没有灵感哦～想到什么就写下来吧！</div>`;
+    return;
+  }
+  const catClass={'学习思路':'cat-study','碎碎念':'cat-life','穿搭灵感':'cat-outfit','备考技巧':'cat-exam','突发想法':'cat-other'};
+  list.innerHTML=DB.sparks.map(s=>{
+    const d=new Date(s.time);
+    const ts=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    return `<div class="note-item">
+      <div class="ops">
+        <button onclick="editSpark(${s.id})">编辑</button>
+        <button onclick="delSpark(${s.id})">删除</button>
+      </div>
+      <span class="cat ${catClass[s.cat]||'cat-other'}">${s.cat}</span>
+      <div class="text">${s.text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+      <span class="time">${ts}</span>
+    </div>`;
+  }).join('');
+}
+
+// === 穿搭 ===
+let outfitActive='commute';
+function renderOutfitTabs(){
+  const wrap=document.getElementById('outfitTabs');
+  wrap.innerHTML=OUTFIT_CATS.map(c=>`<div class="outfit-tab ${c.id===outfitActive?'active':''}" onclick="outfitActive='${c.id}';renderOutfits()">${ico(c.ico)} ${c.name}</div>`).join('');
+}
+function renderOutfits(){
+  renderOutfitTabs();
+  const grid=document.getElementById('outfitGrid');
+  const items=DB.outfits[outfitActive]||[];
+  if(!items.length){
+    grid.innerHTML=`<div class="note-empty" style="grid-column:1/-1">还没有穿搭记录，点下方"添加穿搭"～</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(o=>{
+    const d=new Date(o.time);
+    return `<div class="outfit-card">
+      ${o.img?`<img class="img" src="${o.img}">`:`<div class="img placeholder">${icoLg('work')}</div>`}
+      <div class="body">
+        <div class="note">${(o.note||'').replace(/</g,'&lt;')}</div>
+        <div class="date">${d.getMonth()+1}/${d.getDate()} 添加</div>
+        <button class="del" onclick="delOutfit('${outfitActive}',${o.id})">删除</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+document.getElementById('outfitFile').addEventListener('change',function(e){ handleOutfitFile(e.target); });
+document.getElementById('outfitCam').addEventListener('change',function(e){ handleOutfitFile(e.target); });
+function handleOutfitFile(input){
+  const file=input.files && input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=ev.target.result;
+    openOutfitModal(img, '搭配思路：比如白T+牛仔裤+帆布鞋，简约清爽～');
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function addOutfitByUrl(){
+  openModal('粘贴图片链接', `
+    <input type="text" id="outfitUrl" placeholder="https://...jpg/png" style="width:100%;font-family:inherit;font-size:13px;padding:8px;background:#fff;border:2px solid var(--ink);border-radius:10px;box-shadow:2px 2px 0 var(--ink)">
+    <div style="font-size:11px;color:#9a7a5a;margin-top:6px">提示：长按网络图片→"复制图片地址"，粘贴到这里</div>
+  `,()=>{
+    const url=document.getElementById('outfitUrl').value.trim();
+    if(!url){toast('链接不能空哦');return false;}
+    if(!/^https?:\/\//.test(url)){toast('请输入 http(s):// 开头的链接');return false;}
+    openOutfitModal(url, '搭配思路：比如白T+牛仔裤+帆布鞋，简约清爽～');
+    return true;
+  });
+}
+function openOutfitModal(img, placeholder){
+  openModal('添加穿搭', `
+    <img src="${img}" style="max-width:100%;max-height:200px;border-radius:10px;border:2px solid var(--ink);margin-bottom:8px;display:block;margin-left:auto;margin-right:auto">
+    <textarea id="outfitNote" placeholder="${placeholder}"></textarea>
+  `,()=>{
+    const note=document.getElementById('outfitNote').value.trim();
+    if(!DB.outfits[outfitActive])DB.outfits[outfitActive]=[];
+    DB.outfits[outfitActive].unshift({id:Date.now(),img,note,time:new Date().toISOString()});
+    save();renderOutfits();toast('穿搭添加成功 👗'); return true;
+  });
+}
+function delOutfit(cat,id){ DB.outfits[cat]=DB.outfits[cat].filter(o=>o.id!==id); save();renderOutfits(); }
+function renderOutfitCal(){
+  const wrap=document.getElementById('outfitCalWrap');
+  if(wrap) wrap.innerHTML=renderCal('outfit','outfit_daily',{title:`${icoLg('paper')} 当日穿搭完成记录`});
+}
+
+// === 卡通女生试衣间 ===
+// 部件：发型、上衣、裙子、鞋子、配饰（蝴蝶结）
+const DOLL_PARTS=[
+  {id:'hair',  name:'发型', colors:['#3D2A1F','#7A4A2B','#FFD938','#FF9EAA','#BFE3FF','#D9B8FF']},
+  {id:'bow',   name:'蝴蝶结', colors:['#FF9EAA','#FFD938','#E84C3D','#BFE3FF','#B8E6C8','#FFFFFF']},
+  {id:'top',   name:'上衣',   colors:['#FF9EAA','#FFD938','#BFE3FF','#B8E6C8','#D9B8FF','#FFFFFF','#3D2A1F']},
+  {id:'skirt', name:'裙子',   colors:['#FF9EAA','#FFD938','#E84C3D','#BFE3FF','#B8E6C8','#D9B8FF','#FFFFFF']},
+  {id:'shoes', name:'鞋子',   colors:['#FF9EAA','#FFD938','#3D2A1F','#E84C3D','#FFFFFF','#BFE3FF']},
+];
+const DOLL_DEFAULT={hair:'#3D2A1F',bow:'#FF9EAA',top:'#FFD938',skirt:'#E84C3D',shoes:'#3D2A1F'};
+function getDoll(){
+  if(!DB.doll) DB.doll={...DOLL_DEFAULT};
+  // 兼容旧数据（无 bow/skirt 字段）
+  if(!DB.doll.bow) DB.doll.bow='#FF9EAA';
+  if(!DB.doll.skirt) DB.doll.skirt=DB.doll.bottom||'#E84C3D';
+  return DB.doll;
+}
+function setDollPart(part,color){
+  const d=getDoll();
+  d[part]=color;
+  save();
+  renderDoll();
+}
+function renderDoll(){
+  const wrap=document.getElementById('dollWrap');
+  if(!wrap)return;
+  const d=getDoll();
+  // 左侧：卡通女生小人偶 SVG（长发飘逸 + 蝴蝶结 + 连衣裙 + 玛丽珍鞋）
+  const dollHtml=`
+    <svg viewBox="0 0 120 260" style="width:130px;height:260px">
+      <!-- 长发后部（披肩长发，盖住后背） -->
+      <path d="M32 50 Q22 70 20 110 Q18 140 26 150 Q30 145 30 120 L32 90 Z" fill="${d.hair}" stroke="#3D2A1F" stroke-width="2"/>
+      <path d="M88 50 Q98 70 100 110 Q102 140 94 150 Q90 145 90 120 L88 90 Z" fill="${d.hair}" stroke="#3D2A1F" stroke-width="2"/>
+      <!-- 头发主体（刘海+头顶） -->
+      <path d="M28 40 Q28 14 60 14 Q92 14 92 40 Q94 56 86 60 L82 54 L78 60 L74 54 L70 60 L66 54 L62 60 L58 54 L54 60 L50 54 L46 60 L42 54 L38 60 Q26 56 28 40Z" fill="${d.hair}" stroke="#3D2A1F" stroke-width="2.5" style="cursor:pointer" onclick="cycleDollColor('hair')"/>
+      <!-- 蝴蝶结（头顶右侧，可点） -->
+      <g onclick="cycleDollColor('bow')" style="cursor:pointer">
+        <path d="M76 22 L66 18 L66 30 L76 26 Z" fill="${d.bow}" stroke="#3D2A1F" stroke-width="1.8"/>
+        <path d="M76 22 L86 18 L86 30 L76 26 Z" fill="${d.bow}" stroke="#3D2A1F" stroke-width="1.8"/>
+        <circle cx="76" cy="24" r="2.5" fill="#3D2A1F"/>
+      </g>
+      <!-- 脸（圆形） -->
+      <circle cx="60" cy="48" r="22" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2.5"/>
+      <!-- 眉毛（细短） -->
+      <path d="M42 42 Q47 40 52 42" stroke="#3D2A1F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M68 42 Q73 40 78 42" stroke="#3D2A1F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- 眼睛（大大圆圆的，卡通少女风） -->
+      <ellipse cx="48" cy="50" rx="3.2" ry="4.2" fill="#3D2A1F"/>
+      <ellipse cx="72" cy="50" rx="3.2" ry="4.2" fill="#3D2A1F"/>
+      <!-- 眼睛高光 -->
+      <circle cx="49" cy="48.5" r="1" fill="#fff"/>
+      <circle cx="73" cy="48.5" r="1" fill="#fff"/>
+      <!-- 脸蛋（粉色腮红） -->
+      <ellipse cx="40" cy="56" rx="4" ry="2.5" fill="#FF9EAA" opacity="0.7"/>
+      <ellipse cx="80" cy="56" rx="4" ry="2.5" fill="#FF9EAA" opacity="0.7"/>
+      <!-- 嘴巴（微笑小弧线） -->
+      <path d="M55 60 Q60 65 65 60" stroke="#3D2A1F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- 脖子 -->
+      <rect x="55" y="68" width="10" height="8" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2"/>
+      <!-- 连衣裙上衣部分（可点） -->
+      <path d="M32 76 Q60 70 88 76 L92 130 L28 130 Z" fill="${d.top}" stroke="#3D2A1F" stroke-width="2.5" style="cursor:pointer" onclick="cycleDollColor('top')"/>
+      <!-- 胳膊 -->
+      <path d="M30 78 L20 122 L26 124 L34 82 Z" fill="${d.top}" stroke="#3D2A1F" stroke-width="2.5"/>
+      <path d="M90 78 L100 122 L94 124 L86 82 Z" fill="${d.top}" stroke="#3D2A1F" stroke-width="2.5"/>
+      <!-- 手 -->
+      <circle cx="22" cy="126" r="4.5" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2"/>
+      <circle cx="98" cy="126" r="4.5" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2"/>
+      <!-- 裙子（A字连衣裙摆，可点） -->
+      <path d="M28 130 L92 130 L104 210 L16 210 Z" fill="${d.skirt}" stroke="#3D2A1F" stroke-width="2.5" style="cursor:pointer" onclick="cycleDollColor('skirt')"/>
+      <!-- 裙子褶皱装饰 -->
+      <line x1="40" y1="135" x2="36" y2="208" stroke="#3D2A1F" stroke-width="1" opacity="0.4"/>
+      <line x1="60" y1="135" x2="60" y2="208" stroke="#3D2A1F" stroke-width="1" opacity="0.4"/>
+      <line x1="80" y1="135" x2="84" y2="208" stroke="#3D2A1F" stroke-width="1" opacity="0.4"/>
+      <!-- 腿 -->
+      <rect x="48" y="210" width="8" height="30" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2"/>
+      <rect x="64" y="210" width="8" height="30" fill="#FFE4C4" stroke="#3D2A1F" stroke-width="2"/>
+      <!-- 玛丽珍鞋（可点） -->
+      <ellipse cx="50" cy="244" rx="10" ry="5" fill="${d.shoes}" stroke="#3D2A1F" stroke-width="2" style="cursor:pointer" onclick="cycleDollColor('shoes')"/>
+      <ellipse cx="70" cy="244" rx="10" ry="5" fill="${d.shoes}" stroke="#3D2A1F" stroke-width="2" style="cursor:pointer" onclick="cycleDollColor('shoes')"/>
+      <!-- 鞋带横条 -->
+      <rect x="44" y="240" width="12" height="2.5" fill="#3D2A1F"/>
+      <rect x="64" y="240" width="12" height="2.5" fill="#3D2A1F"/>
+    </svg>
+  `;
+  // 右侧：颜色面板
+  let panelHtml=`<div style="flex:1;min-width:180px;max-width:240px">`;
+  DOLL_PARTS.forEach(p=>{
+    panelHtml+=`<div style="margin-bottom:10px">
+      <div style="font-size:12px;color:var(--shin-brown);margin-bottom:4px;font-weight:bold">${p.name}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">`;
+    p.colors.forEach(c=>{
+      const active = d[p.id]===c;
+      const bg = c==='#FFFFFF' ? '#fff' : c;
+      panelHtml+=`<div onclick="setDollPart('${p.id}','${c}')" style="width:26px;height:26px;border-radius:7px;background:${bg};border:2.5px solid ${active?'#E84C3D':'#3D2A1F'};box-shadow:${active?'2px 2px 0 #3D2A1F':'1px 1px 0 #3D2A1F'};cursor:pointer"></div>`;
+    });
+    panelHtml+=`</div></div>`;
+  });
+  panelHtml+=`<button class="candy-btn small" style="margin-top:6px" onclick="resetDoll()">↺ 重置默认</button></div>`;
+  wrap.innerHTML=dollHtml+panelHtml;
+}
+function cycleDollColor(part){
+  const d=getDoll();
+  const p=DOLL_PARTS.find(x=>x.id===part);
+  if(!p)return;
+  const idx=p.colors.indexOf(d[part]);
+  d[part]=p.colors[(idx+1)%p.colors.length];
+  save();renderDoll();
+}
+function resetDoll(){
+  DB.doll={...DOLL_DEFAULT};
+  save();renderDoll();toast('已重置为默认配色 ✨');
+}
+
+// === 奶茶 ===
+function rollTea(){
+  const t=TEA_POOL[Math.floor(Math.random()*TEA_POOL.length)];
+  document.getElementById('teaResult').innerHTML=`<div style="font-size:12px;color:#9a7a5a">今天就喝</div><span class="big">${t}</span><div class="small">甜甜的一天开始啦～</div>`;
+}
+function addTeaLike(){
+  const html=document.getElementById('teaResult').innerHTML;
+  if(!html.includes('big')){ toast('先摇一杯再收藏嘛～');return; }
+  const m=html.match(/<span class="big">[^<]+<\/span>/);
+  if(!m)return;
+  const name=m[0].replace(/<[^>]+>/g,'');
+  if(DB.teas.some(x=>x.name===name)){toast('已经收藏过啦 ❤️');return;}
+  DB.teas.unshift({id:Date.now(),name,time:new Date().toISOString()});
+  save();renderTeas();toast('加入奶茶收藏 ❤️');
+}
+function delTea(id){ DB.teas=DB.teas.filter(t=>t.id!==id); save();renderTeas(); }
+function renderTeas(){
+  const wrap=document.getElementById('teaList');
+  if(!DB.teas.length){
+    wrap.innerHTML=`<div class="note-empty" style="padding:14px">还没有收藏的奶茶～</div>`;
+    return;
+  }
+  wrap.innerHTML=DB.teas.map(t=>{
+    const d=new Date(t.time);
+    return `<div class="note-item" style="padding:8px 10px">
+      <div class="ops"><button onclick="delTea(${t.id})">删除</button></div>
+      <span class="cat cat-other">收藏</span>
+      <div class="text">${t.name}</div>
+      <span class="time">${d.getMonth()+1}/${d.getDate()} 收藏</span>
+    </div>`;
+  }).join('');
+}
+
+// === 弹窗 ===
+let modalCb=null;
+function openModal(title,bodyHtml,cb){
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=bodyHtml;
+  modalCb=cb;
+  document.getElementById('modalMask').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('modalMask').classList.remove('show');
+  modalCb=null;
+}
+document.getElementById('modalOk').addEventListener('click',()=>{
+  if(modalCb){
+    const r=modalCb();
+    if(r!==false) closeModal();
+  }else closeModal();
+});
+document.getElementById('modalMask').addEventListener('click',e=>{
+  if(e.target.id==='modalMask')closeModal();
+});
+document.getElementById('sparkText').addEventListener('keydown',e=>{
+  if(e.key==='Enter')addSpark();
+});
+
+renderAll();
+
+// === PWA：注册 Service Worker ===
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+
+// === "添加到主屏幕"提示 ===
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(()=>showInstallTip(), 3000);
+});
+
+function showInstallTip(){
+  if(document.getElementById('installTip')) return;
+  const tip=document.createElement('div');
+  tip.id='installTip';
+  tip.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);max-width:90%;background:#FFD938;color:#3D2A1F;padding:10px 14px;border:2.5px solid #3D2A1F;border-radius:14px 18px 12px 16px / 16px 12px 18px 14px;box-shadow:3px 3px 0 #3D2A1F;font-size:13px;z-index:200;display:flex;align-items:center;gap:10px';
+  tip.innerHTML=`
+    <span style="font-size:18px">📲</span>
+    <span style="flex:1">把工作台装到桌面吧～蜡笔小新随时陪你打卡！</span>
+    <button id="installBtn" style="font-family:inherit;background:#E84C3D;color:#fff;border:2px solid #3D2A1F;border-radius:8px;padding:4px 10px;cursor:pointer;box-shadow:1px 1px 0 #3D2A1F">安装</button>
+    <button id="closeTip" style="font-family:inherit;background:#FFFCF5;color:#3D2A1F;border:2px solid #3D2A1F;border-radius:8px;padding:4px 8px;cursor:pointer;box-shadow:1px 1px 0 #3D2A1F">×</button>
+  `;
+  document.body.appendChild(tip);
+  document.getElementById('installBtn').onclick = async () => {
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      tip.remove();
+    } else {
+      alert('iOS 用法：\n点 Safari 底部分享按钮 ⬆\n选 "添加到主屏幕"\n蜡笔小新工作台就装上啦～');
+    }
+  };
+  document.getElementById('closeTip').onclick = () => tip.remove();
+}
+</script>
+</body>
+</html>
